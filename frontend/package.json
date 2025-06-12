@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^9.1.2",
     "vite": "^6.3.5"
   },
@@ -34,6 +35,7 @@
     "yargs-parser": "^21.1.1"
   },
   "scripts": {
+    "dev": "vite",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
