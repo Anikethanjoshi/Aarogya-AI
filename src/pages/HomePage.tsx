@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Video, Shield, Clock, Users, Zap, Heart } from 'lucide-react'
+import { Video, Shield, Clock, Users, Zap, Heart, Stethoscope, Pill, UserCheck } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const HomePage: React.FC = () => {
@@ -39,6 +39,63 @@ const HomePage: React.FC = () => {
             className="inline-flex items-center justify-center px-8 py-3 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-lg font-medium rounded-lg transition-colors duration-200"
           >
             View Plans
+          </Link>
+        </div>
+      </div>
+
+      {/* Health Resources Section */}
+      <div className="mb-16">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Comprehensive Health Resources
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Access detailed information about hospital tools, medicines, and certified doctors 
+            with WHO standards and Jan Aushadhi guidelines.
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-8">
+          <Link to="/hospital-tools" className="group">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+              <div className="bg-blue-100 p-3 rounded-full w-fit mx-auto mb-4">
+                <Stethoscope className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                Hospital Tools
+              </h3>
+              <p className="text-gray-600 text-center">
+                Complete guide to medical equipment and tools used across all hospital departments
+              </p>
+            </div>
+          </Link>
+
+          <Link to="/medicines" className="group">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+              <div className="bg-green-100 p-3 rounded-full w-fit mx-auto mb-4">
+                <Pill className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                Medicines Guide
+              </h3>
+              <p className="text-gray-600 text-center">
+                Detailed information about medicines with WHO standards and Jan Aushadhi pricing
+              </p>
+            </div>
+          </Link>
+
+          <Link to="/doctors" className="group">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+              <div className="bg-purple-100 p-3 rounded-full w-fit mx-auto mb-4">
+                <UserCheck className="h-8 w-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                Find Doctors
+              </h3>
+              <p className="text-gray-600 text-center">
+                Connect with certified healthcare professionals across India and globally
+              </p>
+            </div>
           </Link>
         </div>
       </div>

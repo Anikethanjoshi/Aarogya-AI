@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Heart, User, Menu, X, Globe, LogOut } from 'lucide-react'
+import { Heart, User, Menu, X, Globe, LogOut, Stethoscope, Pill, Users } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import Button from './UI/Button'
@@ -12,6 +12,7 @@ const Header: React.FC = () => {
   const { language, setLanguage, t } = useLanguage()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isHealthMenuOpen, setIsHealthMenuOpen] = useState(false)
 
   const isActive = (path: string) => location.pathname === path
 
@@ -49,6 +50,7 @@ const Header: React.FC = () => {
             >
               {t('nav.home')}
             </Link>
+            
             <Link
               to="/consultation"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -59,6 +61,51 @@ const Header: React.FC = () => {
             >
               {t('nav.consultation')}
             </Link>
+
+            {/* Health Resources Dropdown */}
+            <div className="relative">
+              <button
+                onMouseEnter={() => setIsHealthMenuOpen(true)}
+                onMouseLeave={() => setIsHealthMenuOpen(false)}
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors flex items-center"
+              >
+                Health Resources
+                <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {isHealthMenuOpen && (
+                <div 
+                  className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                  onMouseEnter={() => setIsHealthMenuOpen(true)}
+                  onMouseLeave={() => setIsHealthMenuOpen(false)}
+                >
+                  <Link
+                    to="/hospital-tools"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <Stethoscope className="h-4 w-4 mr-3 text-blue-500" />
+                    Hospital Tools
+                  </Link>
+                  <Link
+                    to="/medicines"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <Pill className="h-4 w-4 mr-3 text-green-500" />
+                    Medicines Guide
+                  </Link>
+                  <Link
+                    to="/doctors"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <Users className="h-4 w-4 mr-3 text-purple-500" />
+                    Find Doctors
+                  </Link>
+                </div>
+              )}
+            </div>
+            
             <Link
               to="/subscription"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -69,6 +116,7 @@ const Header: React.FC = () => {
             >
               {t('nav.subscription')}
             </Link>
+            
             {user && (
               <Link
                 to="/dashboard"
@@ -188,6 +236,36 @@ const Header: React.FC = () => {
               >
                 {t('nav.consultation')}
               </Link>
+              
+              {/* Mobile Health Resources */}
+              <div className="pl-3">
+                <p className="text-sm font-medium text-gray-500 mb-2">Health Resources</p>
+                <Link
+                  to="/hospital-tools"
+                  className="flex items-center px-3 py-2 text-sm text-gray-700 hover:text-blue-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Stethoscope className="h-4 w-4 mr-3 text-blue-500" />
+                  Hospital Tools
+                </Link>
+                <Link
+                  to="/medicines"
+                  className="flex items-center px-3 py-2 text-sm text-gray-700 hover:text-blue-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Pill className="h-4 w-4 mr-3 text-green-500" />
+                  Medicines Guide
+                </Link>
+                <Link
+                  to="/doctors"
+                  className="flex items-center px-3 py-2 text-sm text-gray-700 hover:text-blue-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Users className="h-4 w-4 mr-3 text-purple-500" />
+                  Find Doctors
+                </Link>
+              </div>
+              
               <Link
                 to="/subscription"
                 className={`block px-3 py-2 rounded-md text-base font-medium ${

@@ -9,6 +9,9 @@ import ConsultationPage from './pages/ConsultationPage'
 import SubscriptionPage from './pages/SubscriptionPage'
 import AuthPage from './pages/AuthPage'
 import DashboardPage from './pages/DashboardPage'
+import HospitalToolsPage from './pages/HospitalToolsPage'
+import MedicinesPage from './pages/MedicinesPage'
+import DoctorsPage from './pages/DoctorsPage'
 import BoltBadge from './components/BoltBadge'
 
 function App() {
@@ -25,6 +28,9 @@ function App() {
                 <Route path="/subscription" element={<SubscriptionPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/hospital-tools" element={<HospitalToolsPage />} />
+                <Route path="/medicines" element={<MedicinesPage />} />
+                <Route path="/doctors" element={<DoctorsPage />} />
               </Routes>
             </main>
             <Footer />
