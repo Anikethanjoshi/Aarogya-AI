@@ -12,6 +12,7 @@ import DashboardPage from './pages/DashboardPage'
 import HospitalToolsPage from './pages/HospitalToolsPage'
 import MedicinesPage from './pages/MedicinesPage'
 import DoctorsPage from './pages/DoctorsPage'
+import LocationsPage from './pages/LocationsPage'
 import BoltBadge from './components/BoltBadge'
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/hospital-tools" element={<HospitalToolsPage />} />
                 <Route path="/medicines" element={<MedicinesPage />} />
                 <Route path="/doctors" element={<DoctorsPage />} />
+                <Route path="/locations" element={<LocationsPage />} />
               </Routes>
             </main>
             <Footer />

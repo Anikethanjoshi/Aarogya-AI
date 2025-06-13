@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Heart, User, Menu, X, Globe, LogOut, Stethoscope, Pill, Users } from 'lucide-react'
+import { Heart, User, Menu, X, Globe, LogOut, Stethoscope, Pill, Users, MapPin } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import Button from './UI/Button'
@@ -101,6 +101,13 @@ const Header: React.FC = () => {
                   >
                     <Users className="h-4 w-4 mr-3 text-purple-500" />
                     Find Doctors
+                  </Link>
+                  <Link
+                    to="/locations"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <MapPin className="h-4 w-4 mr-3 text-red-500" />
+                    Nearby Locations
                   </Link>
                 </div>
               )}
@@ -264,6 +271,14 @@ const Header: React.FC = () => {
                   <Users className="h-4 w-4 mr-3 text-purple-500" />
                   Find Doctors
                 </Link>
+                <Link
+                  to="/locations"
+                  className="flex items-center px-3 py-2 text-sm text-gray-700 hover:text-blue-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <MapPin className="h-4 w-4 mr-3 text-red-500" />
+                  Nearby Locations
+                </Link>
               </div>
               
               <Link
@@ -277,6 +292,7 @@ const Header: React.FC = () => {
               >
                 {t('nav.subscription')}
               </Link>
+              
               {user && (
                 <Link
                   to="/dashboard"

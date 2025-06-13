@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Video, Shield, Clock, Users, Zap, Heart, Stethoscope, Pill, UserCheck } from 'lucide-react'
+import { Video, Shield, Clock, Users, Zap, Heart, Stethoscope, Pill, UserCheck, MapPin } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const HomePage: React.FC = () => {
@@ -50,12 +50,12 @@ const HomePage: React.FC = () => {
             Comprehensive Health Resources
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Access detailed information about hospital tools, medicines, and certified doctors 
-            with WHO standards and Jan Aushadhi guidelines.
+            Access detailed information about hospital tools, medicines, certified doctors, 
+            and nearby healthcare facilities with WHO standards and Jan Aushadhi guidelines.
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link to="/hospital-tools" className="group">
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 group-hover:scale-105">
               <div className="bg-blue-100 p-3 rounded-full w-fit mx-auto mb-4">
@@ -64,7 +64,7 @@ const HomePage: React.FC = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
                 Hospital Tools
               </h3>
-              <p className="text-gray-600 text-center">
+              <p className="text-gray-600 text-center text-sm">
                 Complete guide to medical equipment and tools used across all hospital departments
               </p>
             </div>
@@ -78,7 +78,7 @@ const HomePage: React.FC = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
                 Medicines Guide
               </h3>
-              <p className="text-gray-600 text-center">
+              <p className="text-gray-600 text-center text-sm">
                 Detailed information about medicines with WHO standards and Jan Aushadhi pricing
               </p>
             </div>
@@ -92,8 +92,22 @@ const HomePage: React.FC = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
                 Find Doctors
               </h3>
-              <p className="text-gray-600 text-center">
+              <p className="text-gray-600 text-center text-sm">
                 Connect with certified healthcare professionals across India and globally
+              </p>
+            </div>
+          </Link>
+
+          <Link to="/locations" className="group">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+              <div className="bg-red-100 p-3 rounded-full w-fit mx-auto mb-4">
+                <MapPin className="h-8 w-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
+                Nearby Locations
+              </h3>
+              <p className="text-gray-600 text-center text-sm">
+                Find hospitals, pharmacies, and clinics near you with Google Maps integration
               </p>
             </div>
           </Link>
