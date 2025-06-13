@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Navigation, Phone, Clock, Star, Filter, Search, Directions } from 'lucide-react';
+import { MapPin, Navigation, Phone, Clock, Star, Filter, Search, Construction as Directions } from 'lucide-react';
 import GoogleMap from '../components/GoogleMap';
 import LocationSearch from '../components/LocationSearch';
 import TavusVideoAgent from '../components/TavusVideoAgent';

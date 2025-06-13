@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Navigation, Phone, Clock, Star, Directions } from 'lucide-react';
+import { MapPin, Navigation, Phone, Clock, Star, Construction as Directions } from 'lucide-react';
 
 interface Location {
   id: string;
