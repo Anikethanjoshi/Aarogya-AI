@@ -2,6 +2,15 @@
 
 A face-to-face AI health companion built with **Bolt.new** and powered by **Tavus AI** video agents with **RevenueCat** subscription management.
 
+## 👨‍💻 Developer
+
+**Anikethan Joshi**
+- 📱 Mobile: +91 9606725656
+- 📧 Email: akhilajoshi0609@gmail.com
+- 💼 LinkedIn: [Anikethan Joshi](https://www.linkedin.com/in/anikethan-joshi-050ab6242/)
+- 🐙 GitHub: [Anikethanjoshi](https://github.com/Anikethanjoshi)
+- 📍 Location: Bangalore, Karnataka, India
+
 ## 🏆 Hackathon Compliance
 
 This project is specifically built for the **World's Largest Hackathon** and meets all requirements:
@@ -117,8 +126,20 @@ Built entirely with **Bolt.new** showcasing:
 - Improve global health outcomes
 - Bridge healthcare gaps in underserved areas
 
+## 📞 Contact & Support
+
+For questions, support, or collaboration opportunities:
+
+- **Developer**: Anikethan Joshi
+- **Email**: akhilajoshi0609@gmail.com
+- **Mobile**: +91 9606725656
+- **LinkedIn**: [Connect with me](https://www.linkedin.com/in/anikethan-joshi-050ab6242/)
+- **GitHub**: [View my projects](https://github.com/Anikethanjoshi)
+
 ---
 
 **Built with ❤️ using Bolt.new | Powered by Tavus AI | Subscriptions by RevenueCat**
 
 *This project demonstrates the future of AI-powered healthcare and rapid application development.*
+
+**© 2024 Anikethan Joshi | Bangalore, Karnataka, India**
