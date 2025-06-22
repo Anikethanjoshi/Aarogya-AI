@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Navigation, Phone, Clock, Star, Construction as Directions } from 'lucide-react';
+import { MapPin, Navigation, Phone, Clock, Star, Directions } from 'lucide-react';
 
 interface Location {
   id: string;
@@ -32,11 +32,11 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
   className = ''
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [nearbyLocations, setNearbyLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState(false);
+  const [mapInitialized, setMapInitialized] = useState(false);
 
   // Mock data for demonstration - In real app, this would come from Google Places API
   const mockLocations: Location[] = [
@@ -125,78 +125,24 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
         },
         (error) => {
           console.error('Error getting location:', error);
+          setUserLocation(center); // Fallback to default center
         }
       );
+    } else {
+      setUserLocation(center);
     }
-  }, []);
+  }, [center]);
 
   useEffect(() => {
-    // Initialize Google Map
-    if (mapRef.current && !map) {
-      const googleMap = new google.maps.Map(mapRef.current, {
-        center: userLocation || center,
-        zoom: zoom,
-        styles: [
-          {
-            featureType: 'poi.medical',
-            elementType: 'geometry',
-            stylers: [{ color: '#ffeaa7' }]
-          },
-          {
-            featureType: 'poi.medical',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#d63031' }]
-          }
-        ]
-      });
-
-      setMap(googleMap);
+    // Initialize mock map
+    if (mapRef.current && !mapInitialized) {
+      setMapInitialized(true);
+      // Simulate map loading
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
-  }, [mapRef, map, userLocation, center, zoom]);
-
-  useEffect(() => {
-    // Add markers to map
-    if (map) {
-      // Clear existing markers
-      // Add user location marker
-      if (userLocation) {
-        new google.maps.Marker({
-          position: userLocation,
-          map: map,
-          title: 'Your Location',
-          icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="8" fill="#3b82f6"/>
-                <circle cx="12" cy="12" r="3" fill="white"/>
-              </svg>
-            `),
-            scaledSize: new google.maps.Size(24, 24)
-          }
-        });
-      }
-
-      // Add location markers
-      nearbyLocations.forEach((location) => {
-        const marker = new google.maps.Marker({
-          position: { lat: location.lat, lng: location.lng },
-          map: map,
-          title: location.name,
-          icon: {
-            url: getMarkerIcon(location.type),
-            scaledSize: new google.maps.Size(32, 32)
-          }
-        });
-
-        marker.addListener('click', () => {
-          setSelectedLocation(location);
-          if (onLocationSelect) {
-            onLocationSelect(location);
-          }
-        });
-      });
-    }
-  }, [map, userLocation, nearbyLocations, onLocationSelect]);
+  }, [mapInitialized]);
 
   useEffect(() => {
     // Filter locations based on search type
@@ -206,57 +152,99 @@ const GoogleMap: React.FC<GoogleMapProps> = ({
     setNearbyLocations(filtered);
   }, [searchType]);
 
-  const getMarkerIcon = (type: string) => {
-    const colors = {
-      hospital: '#ef4444',
-      pharmacy: '#10b981',
-      clinic: '#3b82f6',
-      diagnostic: '#8b5cf6',
-      'jan-aushadhi': '#f59e0b'
-    };
-    
-    const color = colors[type as keyof typeof colors] || '#6b7280';
-    
-    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="${color}"/>
-        <circle cx="12" cy="9" r="2.5" fill="white"/>
-      </svg>
-    `)}`;
-  };
-
-  const searchNearby = async (query: string) => {
-    setLoading(true);
-    // In real implementation, this would use Google Places API
-    // For now, we'll simulate the search
-    setTimeout(() => {
-      const filtered = mockLocations.filter(loc => 
-        loc.name.toLowerCase().includes(query.toLowerCase()) ||
-        loc.services.some(service => service.toLowerCase().includes(query.toLowerCase()))
-      );
-      setNearbyLocations(filtered);
-      setLoading(false);
-    }, 1000);
-  };
-
   const getDirections = (location: Location) => {
     if (userLocation) {
       const url = `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${location.lat},${location.lng}`;
       window.open(url, '_blank');
+    } else {
+      alert('Location access required for directions');
+    }
+  };
+
+  const handleLocationClick = (location: Location) => {
+    setSelectedLocation(location);
+    if (onLocationSelect) {
+      onLocationSelect(location);
     }
   };
 
   return (
     <div className={`relative ${className}`}>
       {/* Map Container */}
-      <div ref={mapRef} className="w-full h-96 rounded-lg border border-gray-300" />
-      
-      {/* Loading Overlay */}
-      {loading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-lg">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div 
+        ref={mapRef} 
+        className="w-full h-96 rounded-lg border border-gray-300 bg-gray-100 relative overflow-hidden"
+      >
+        {/* Mock Map Interface */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-green-100">
+          {/* Map Grid Pattern */}
+          <div className="absolute inset-0 opacity-20">
+            <svg width="100%" height="100%">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#666" strokeWidth="1"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+
+          {/* User Location Marker */}
+          {userLocation && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
+              <div className="text-xs text-blue-600 font-medium mt-1 whitespace-nowrap">You are here</div>
+            </div>
+          )}
+
+          {/* Location Markers */}
+          {nearbyLocations.map((location, index) => (
+            <div
+              key={location.id}
+              className={`absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 ${
+                selectedLocation?.id === location.id ? 'z-20' : 'z-10'
+              }`}
+              style={{
+                top: `${30 + (index * 15)}%`,
+                left: `${40 + (index * 10)}%`
+              }}
+              onClick={() => handleLocationClick(location)}
+            >
+              <div className={`w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold ${
+                location.type === 'hospital' ? 'bg-red-500' :
+                location.type === 'pharmacy' ? 'bg-green-500' :
+                location.type === 'jan-aushadhi' ? 'bg-orange-500' :
+                location.type === 'diagnostic' ? 'bg-purple-500' :
+                'bg-blue-500'
+              } ${selectedLocation?.id === location.id ? 'scale-125' : 'hover:scale-110'} transition-transform`}>
+                {location.type === 'hospital' ? '🏥' :
+                 location.type === 'pharmacy' ? '💊' :
+                 location.type === 'jan-aushadhi' ? '🏪' :
+                 location.type === 'diagnostic' ? '🔬' : '📍'}
+              </div>
+              {selectedLocation?.id === location.id && (
+                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-2 min-w-48 border">
+                  <div className="text-sm font-medium text-gray-900">{location.name}</div>
+                  <div className="text-xs text-gray-600">{location.distance}</div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Map Controls */}
+          <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2">
+            <button className="block w-8 h-8 text-gray-600 hover:text-gray-800 text-lg font-bold">+</button>
+            <button className="block w-8 h-8 text-gray-600 hover:text-gray-800 text-lg font-bold">-</button>
+          </div>
+
+          {/* Loading Overlay */}
+          {loading && (
+            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Selected Location Info */}
       {selectedLocation && (

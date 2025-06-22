@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, Filter, Navigation, Phone, Star, Clock } from 'lucide-react';
+import { Search, MapPin, Navigation, Phone, Star, Clock } from 'lucide-react';
 
 interface LocationSearchProps {
   onLocationSelect?: (location: any) => void;
@@ -22,7 +22,6 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          const { latitude, longitude } = position.coords;
           // In real app, use Google Geocoding API to get address
           setCurrentLocation('Bangalore, Karnataka, India');
         },
@@ -31,6 +30,8 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
           setCurrentLocation('Location not available');
         }
       );
+    } else {
+      setCurrentLocation('Location not available');
     }
   }, []);
 
@@ -38,7 +39,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
     setSearchQuery(query);
     if (query.length > 2) {
       setIsLoading(true);
-      // Simulate Google Places API search
+      // Simulate search delay
       setTimeout(() => {
         const mockSuggestions = [
           {
@@ -48,7 +49,8 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
             address: 'Bannerghatta Road, Bangalore',
             distance: '2.3 km',
             rating: 4.5,
-            phone: '+91 80 2692 2222'
+            phone: '+91 80 2692 2222',
+            openHours: '24/7'
           },
           {
             id: '2',
@@ -57,7 +59,8 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
             address: '5th Block, Koramangala, Bangalore',
             distance: '1.8 km',
             rating: 4.2,
-            phone: '+91 80 4112 3456'
+            phone: '+91 80 4112 3456',
+            openHours: '9:00 AM - 9:00 PM'
           },
           {
             id: '3',
@@ -66,11 +69,23 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
             address: 'Cunningham Road, Bangalore',
             distance: '3.1 km',
             rating: 4.4,
-            phone: '+91 80 6621 4444'
+            phone: '+91 80 6621 4444',
+            openHours: '24/7'
+          },
+          {
+            id: '4',
+            name: 'MedPlus Pharmacy Indiranagar',
+            type: 'pharmacy',
+            address: 'Indiranagar, Bangalore',
+            distance: '2.7 km',
+            rating: 4.1,
+            phone: '+91 80 2521 7890',
+            openHours: '8:00 AM - 11:00 PM'
           }
         ].filter(item => 
           item.name.toLowerCase().includes(query.toLowerCase()) ||
-          item.address.toLowerCase().includes(query.toLowerCase())
+          item.address.toLowerCase().includes(query.toLowerCase()) ||
+          (searchType !== 'all' && item.type === searchType)
         );
         
         setSuggestions(mockSuggestions);
@@ -91,9 +106,19 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
         return '🩺';
       case 'diagnostic':
         return '🔬';
+      case 'jan-aushadhi':
+        return '🏪';
       default:
         return '📍';
     }
+  };
+
+  const handleLocationClick = (location: any) => {
+    if (onLocationSelect) {
+      onLocationSelect(location);
+    }
+    setSuggestions([]);
+    setSearchQuery('');
   };
 
   return (
@@ -132,13 +157,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
           {suggestions.map((suggestion) => (
             <div
               key={suggestion.id}
-              onClick={() => {
-                if (onLocationSelect) {
-                  onLocationSelect(suggestion);
-                }
-                setSuggestions([]);
-                setSearchQuery('');
-              }}
+              onClick={() => handleLocationClick(suggestion)}
               className="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
             >
               <div className="flex items-start space-x-3">
@@ -156,8 +175,8 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
                     </div>
                     <span className="text-xs text-gray-600">{suggestion.distance}</span>
                     <div className="flex items-center space-x-1">
-                      <Phone className="w-3 h-3 text-gray-400" />
-                      <span className="text-xs text-gray-600">{suggestion.phone}</span>
+                      <Clock className="w-3 h-3 text-gray-400" />
+                      <span className="text-xs text-gray-600">{suggestion.openHours}</span>
                     </div>
                   </div>
                 </div>
