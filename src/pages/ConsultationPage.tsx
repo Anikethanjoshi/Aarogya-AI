@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Play, Pause, Video, Mic, MicOff, Camera, CameraOff, Phone, PhoneOff } from 'lucide-react'
+import { Video, Mic, MicOff, Camera, CameraOff, Phone, PhoneOff } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import AnimatedAvatar from '../components/AI/AnimatedAvatar'

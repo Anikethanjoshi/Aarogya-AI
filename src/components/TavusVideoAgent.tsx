@@ -19,7 +19,7 @@ const TavusVideoAgent: React.FC<TavusVideoAgentProps> = ({
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(180); // 3 minutes default
+  const [duration] = useState(180); // 3 minutes default
   const [currentScriptIndex, setCurrentScriptIndex] = useState(0);
   const videoRef = useRef<HTMLDivElement>(null);
 

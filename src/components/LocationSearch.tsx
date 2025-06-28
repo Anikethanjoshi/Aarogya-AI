@@ -21,7 +21,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
     // Get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        async (_position) => {
           // In real app, use Google Geocoding API to get address
           setCurrentLocation('Bangalore, Karnataka, India');
         },
