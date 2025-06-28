@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Navigation, Phone, Clock, Star, Construction as Directions } from 'lucide-react';
+import { MapPin, Phone, Clock, Star, Construction as Directions } from 'lucide-react';
 
 interface Location {
   id: string;
@@ -18,7 +18,6 @@ interface Location {
 
 interface GoogleMapProps {
   center?: { lat: number; lng: number };
-  zoom?: number;
   searchType?: string;
   onLocationSelect?: (location: Location) => void;
   className?: string;
@@ -26,7 +25,6 @@ interface GoogleMapProps {
 
 const GoogleMap: React.FC<GoogleMapProps> = ({
   center = { lat: 12.9716, lng: 77.5946 }, // Bangalore default
-  zoom = 12,
   searchType = 'all',
   onLocationSelect,
   className = ''

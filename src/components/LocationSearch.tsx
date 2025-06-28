@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, Navigation, Phone, Star, Clock } from 'lucide-react';
+import { Search, MapPin, Navigation, Star, Clock } from 'lucide-react';
 
 interface LocationSearchProps {
   onLocationSelect?: (location: any) => void;
