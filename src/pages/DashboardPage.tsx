@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Video, 
   Calendar, 
   Clock, 
   TrendingUp, 
-  Heart, 
-  Activity,
-  Users,
   Star,
   Play,
   BarChart3,
@@ -18,7 +15,6 @@ import Button from '../components/UI/Button';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('overview');
 
   const stats = [
     {
