@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Heart, Stethoscope, Syringe, Activity, Award, Globe, Shield } from 'lucide-react';
+import { Search, Stethoscope, Syringe, Activity, Award, Globe, Shield } from 'lucide-react';
 import TavusVideoAgent from '../components/TavusVideoAgent';
 import { hospitalToolsData, toolCategories, departments } from '../data/hospitalTools';
 

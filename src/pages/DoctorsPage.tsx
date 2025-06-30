@@ -151,7 +151,7 @@ const DoctorsPage: React.FC = () => {
                       )}
                     </div>
                     {doctor.verified && (
-                      <Shield className="w-5 h-5 text-green-500" title="Verified Doctor" />
+                      <Shield className="w-5 h-5 text-green-500" />
                     )}
                   </div>
                 </div>
