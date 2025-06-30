@@ -6,6 +6,12 @@ export interface User {
   subscription?: 'basic' | 'premium' | 'enterprise';
   createdAt: Date;
   tavusApiKey?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  language?: string;
 }
 
 export interface AuthContextType {
@@ -14,6 +20,7 @@ export interface AuthContextType {
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
+  updateUser?: (updates: Partial<User>) => void;
 }
 
 export interface LanguageContextType {
@@ -31,6 +38,9 @@ export interface ConsultationSession {
   aiAgent: string;
   duration?: number;
   tavusSessionId?: string;
+  transcript?: string;
+  summary?: string;
+  recommendations?: string[];
 }
 
 export interface SubscriptionPlan {
@@ -50,4 +60,22 @@ export interface TavusSession {
   duration: number;
   participantCount: number;
   createdAt: Date;
+}
+
+export interface HealthRecord {
+  id: string;
+  userId: string;
+  type: 'consultation' | 'prescription' | 'test_result' | 'vaccination';
+  title: string;
+  description: string;
+  date: Date;
+  data: any;
+  attachments?: string[];
+}
+
+export interface APIResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
 }

@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { Check, Star, Crown, CreditCard, AlertCircle } from 'lucide-react'
+import { Check, Star, Crown, CreditCard, AlertCircle, Loader } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { useNavigate } from 'react-router-dom'
+import { revenueCatService } from '../services/revenueCatService'
 
 const SubscriptionPage: React.FC = () => {
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
+  const { showToast } = useToastContext()
   const navigate = useNavigate()
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -69,7 +72,7 @@ const SubscriptionPage: React.FC = () => {
 
   const handleSubscribe = async (planId: string) => {
     if (!user) {
-      alert('Please login to subscribe to a plan');
+      showToast('error', 'Please login to subscribe to a plan');
       navigate('/auth');
       return;
     }
@@ -78,27 +81,45 @@ const SubscriptionPage: React.FC = () => {
     setIsProcessing(true);
     
     try {
-      // Simulate RevenueCat subscription flow
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
       const plan = plans.find(p => p.id === planId);
-      if (plan) {
-        // Update user subscription in localStorage (in real app, this would be handled by backend)
-        const updatedUser = {
-          ...user,
-          subscription: planId as 'basic' | 'premium' | 'enterprise'
-        };
-        localStorage.setItem('aarogya_user', JSON.stringify(updatedUser));
+      if (!plan) {
+        throw new Error('Plan not found');
+      }
+
+      // Handle enterprise plan differently
+      if (planId === 'enterprise') {
+        showToast('info', 'Please contact our sales team for enterprise pricing');
+        window.open('mailto:akhilajoshi0609@gmail.com?subject=Enterprise Plan Inquiry', '_blank');
+        return;
+      }
+
+      // Simulate RevenueCat subscription flow
+      const success = await revenueCatService.purchasePackage(user.id, plan.revenueCatId);
+      
+      if (success) {
+        // Update user subscription
+        if (updateUser) {
+          updateUser({ subscription: planId as 'basic' | 'premium' | 'enterprise' });
+        }
         
-        alert(`Successfully subscribed to ${plan.name} plan via RevenueCat!`);
+        showToast('success', `Successfully subscribed to ${plan.name} plan!`);
         navigate('/dashboard');
+      } else {
+        throw new Error('Payment processing failed');
       }
     } catch (error) {
-      alert('Subscription failed. Please try again.');
+      console.error('Subscription error:', error);
+      showToast('error', 'Subscription failed. Please try again.');
     } finally {
       setSelectedPlan(null);
       setIsProcessing(false);
     }
+  }
+
+  const getCurrentPlanName = () => {
+    if (!user?.subscription) return null;
+    const plan = plans.find(p => p.id === user.subscription);
+    return plan?.name;
   }
 
   return (
@@ -133,10 +154,22 @@ const SubscriptionPage: React.FC = () => {
         </div>
       )}
 
+      {user && getCurrentPlanName() && (
+        <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <Star className="h-5 w-5 text-blue-600 mr-2" />
+            <p className="text-blue-800">
+              You are currently subscribed to the <strong>{getCurrentPlanName()}</strong> plan.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="grid md:grid-cols-3 gap-8 mb-12">
         {plans.map((plan) => {
           const IconComponent = plan.icon
           const isLoading = selectedPlan === plan.id && isProcessing
+          const isCurrentPlan = user?.subscription === plan.id
           
           return (
             <div
@@ -144,6 +177,8 @@ const SubscriptionPage: React.FC = () => {
               className={`bg-white rounded-xl shadow-sm border-2 transition-all duration-200 relative ${
                 plan.popular 
                   ? 'border-blue-500 shadow-lg scale-105' 
+                  : isCurrentPlan
+                  ? 'border-green-500 shadow-md'
                   : 'border-gray-200 hover:border-blue-300'
               }`}
             >
@@ -155,16 +190,28 @@ const SubscriptionPage: React.FC = () => {
                 </div>
               )}
 
+              {isCurrentPlan && (
+                <div className="absolute -top-4 right-4">
+                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                    Current Plan
+                  </span>
+                </div>
+              )}
+
               <div className="p-6">
                 <div className="text-center mb-6">
                   <div className={`inline-flex p-3 rounded-full mb-4 ${
                     plan.popular 
                       ? 'bg-blue-100' 
+                      : isCurrentPlan
+                      ? 'bg-green-100'
                       : 'bg-gray-100'
                   }`}>
                     <IconComponent className={`h-8 w-8 ${
                       plan.popular 
                         ? 'text-blue-600' 
+                        : isCurrentPlan
+                        ? 'text-green-600'
                         : 'text-gray-600'
                     }`} />
                   </div>
@@ -193,18 +240,22 @@ const SubscriptionPage: React.FC = () => {
 
                 <button
                   onClick={() => handleSubscribe(plan.id)}
-                  disabled={isLoading || isProcessing}
+                  disabled={isLoading || isProcessing || isCurrentPlan}
                   className={`w-full py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                    plan.popular
+                    isCurrentPlan
+                      ? 'bg-green-100 text-green-800 cursor-default'
+                      : plan.popular
                       ? 'bg-blue-600 hover:bg-blue-700 text-white'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-900'
                   }`}
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                      <Loader className="animate-spin h-4 w-4 mr-2" />
                       Processing...
                     </div>
+                  ) : isCurrentPlan ? (
+                    'Current Plan'
                   ) : !user ? (
                     'Login to Subscribe'
                   ) : plan.price === 'Custom' ? (

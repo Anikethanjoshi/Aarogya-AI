@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthContextType } from '../types';
+import { validateEmail, validatePassword } from '../utils/validation';
+import { STORAGE_KEYS, ERROR_MESSAGES } from '../utils/constants';
+import { logError } from '../utils/errorHandler';
+import { revenueCatService } from '../services/revenueCatService';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -20,32 +24,53 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check for existing session
+    initializeAuth();
+  }, []);
+
+  const initializeAuth = async () => {
     try {
-      const savedUser = localStorage.getItem('aarogya_user');
+      const savedUser = localStorage.getItem(STORAGE_KEYS.USER);
       if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
-        // Validate user object structure
-        if (parsedUser && parsedUser.id && parsedUser.email && parsedUser.name) {
+        if (isValidUserObject(parsedUser)) {
+          // Check subscription status with RevenueCat
+          if (revenueCatService.isConfigured()) {
+            const subscription = await revenueCatService.getSubscriberInfo(parsedUser.id);
+            if (subscription) {
+              parsedUser.subscription = subscription.planId;
+            }
+          }
           setUser(parsedUser);
         } else {
-          localStorage.removeItem('aarogya_user');
+          localStorage.removeItem(STORAGE_KEYS.USER);
         }
       }
     } catch (error) {
-      console.error('Error loading user from localStorage:', error);
-      localStorage.removeItem('aarogya_user');
+      logError(error as Error, 'AuthProvider.initializeAuth');
+      localStorage.removeItem(STORAGE_KEYS.USER);
     }
-  }, []);
+  };
+
+  const isValidUserObject = (user: any): boolean => {
+    return user && 
+           typeof user.id === 'string' && 
+           typeof user.email === 'string' && 
+           typeof user.name === 'string' &&
+           validateEmail(user.email);
+  };
 
   const login = async (email: string, password: string) => {
     if (!email || !password) {
       throw new Error('Email and password are required');
     }
 
+    if (!validateEmail(email)) {
+      throw new Error('Please enter a valid email address');
+    }
+
     setLoading(true);
     try {
-      // Simulate API call - In real app, this would connect to Firebase/Supabase
+      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Demo credentials check
@@ -56,31 +81,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           name: 'Demo User',
           subscription: 'premium',
           createdAt: new Date(),
-          tavusApiKey: 'demo_tavus_key_' + Math.random().toString(36).substr(2, 9)
+          tavusApiKey: 'demo_tavus_key_' + Math.random().toString(36).substr(2, 9),
+          avatar: 'https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=100'
         };
         
         setUser(mockUser);
-        localStorage.setItem('aarogya_user', JSON.stringify(mockUser));
-      } else {
-        // Create user for any valid email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          throw new Error('Please enter a valid email address');
-        }
-
-        const mockUser: User = {
-          id: 'user_' + Math.random().toString(36).substr(2, 9),
-          email,
-          name: email.split('@')[0],
-          subscription: 'basic',
-          createdAt: new Date(),
-          tavusApiKey: 'tavus_key_' + Math.random().toString(36).substr(2, 9)
-        };
-        
-        setUser(mockUser);
-        localStorage.setItem('aarogya_user', JSON.stringify(mockUser));
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockUser));
+        return;
       }
+
+      // For any other valid email, create a user
+      const mockUser: User = {
+        id: 'user_' + Math.random().toString(36).substr(2, 9),
+        email,
+        name: email.split('@')[0],
+        subscription: 'basic',
+        createdAt: new Date(),
+        tavusApiKey: 'tavus_key_' + Math.random().toString(36).substr(2, 9),
+        avatar: 'https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=100'
+      };
+      
+      setUser(mockUser);
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockUser));
     } catch (error) {
+      logError(error as Error, 'AuthProvider.login');
       throw error;
     } finally {
       setLoading(false);
@@ -92,18 +116,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw new Error('All fields are required');
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!validateEmail(email)) {
       throw new Error('Please enter a valid email address');
     }
 
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters long');
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      throw new Error(passwordValidation.errors[0]);
+    }
+
+    if (name.length < 2) {
+      throw new Error('Name must be at least 2 characters long');
     }
 
     setLoading(true);
     try {
-      // Simulate API call
+      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const mockUser: User = {
@@ -112,12 +140,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         name,
         subscription: 'basic',
         createdAt: new Date(),
-        tavusApiKey: 'tavus_key_' + Math.random().toString(36).substr(2, 9)
+        tavusApiKey: 'tavus_key_' + Math.random().toString(36).substr(2, 9),
+        avatar: 'https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=100'
       };
       
       setUser(mockUser);
-      localStorage.setItem('aarogya_user', JSON.stringify(mockUser));
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockUser));
     } catch (error) {
+      logError(error as Error, 'AuthProvider.register');
       throw new Error('Registration failed. Please try again.');
     } finally {
       setLoading(false);
@@ -126,7 +156,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('aarogya_user');
+    localStorage.removeItem(STORAGE_KEYS.USER);
+    // Clear other user-specific data
+    localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+  };
+
+  const updateUser = (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+    }
   };
 
   const value: AuthContextType = {
@@ -134,7 +174,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
-    loading
+    loading,
+    updateUser
   };
 
   return (
