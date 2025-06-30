@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthContextType } from '../types';
 import { validateEmail, validatePassword } from '../utils/validation';
-import { STORAGE_KEYS, ERROR_MESSAGES } from '../utils/constants';
+import { STORAGE_KEYS } from '../utils/constants';
 import { logError } from '../utils/errorHandler';
 import { revenueCatService } from '../services/revenueCatService';
 

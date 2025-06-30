@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, Video, FileText, Download, Eye } from 'lucide-react';
+import { Calendar, Clock, Video, Download, Eye } from 'lucide-react';
 import { ConsultationSession } from '../types';
 import Modal from './UI/Modal';
 
