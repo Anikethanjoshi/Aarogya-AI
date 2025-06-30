@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Navigation, Phone, Clock, Star, Construction as Directions } from 'lucide-react';
+import { MapPin, Navigation, Phone, Clock, Star, Filter, Search, Construction as Directions } from 'lucide-react';
 import GoogleMap from '../components/GoogleMap';
 import LocationSearch from '../components/LocationSearch';
 import TavusVideoAgent from '../components/TavusVideoAgent';
@@ -185,19 +185,6 @@ const LocationsPage: React.FC = () => {
 
   const tavusScript = "Namaste! I'm Dr. Aarogya, your AI health companion. Welcome to our comprehensive location finder - your gateway to discovering healthcare facilities near you. Using advanced Google Maps integration and real-time satellite data, I'll help you find the nearest hospitals, Jan Aushadhi stores, pharmacies, diagnostic centers, and clinics. Each location is verified with complete details including contact information, services, operating hours, and patient reviews. Whether you need emergency care or routine health services, I'm here to guide you to the right place at the right time.";
 
-  const handleLocationSelect = (locationData: any) => {
-    // Find the matching location from our comprehensive data
-    const matchingLocation = healthcareLocations.find(loc => 
-      loc.id === locationData.id || 
-      loc.name.toLowerCase().includes(locationData.name?.toLowerCase() || '') ||
-      loc.phone === locationData.phone
-    );
-    
-    if (matchingLocation) {
-      setSelectedLocation(matchingLocation);
-    }
-  };
-
   const getDirections = (location: HealthcareLocation) => {
     if (userLocation) {
       const url = `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${location.lat},${location.lng}`;
@@ -248,7 +235,7 @@ const LocationsPage: React.FC = () => {
       {/* Search and Filters */}
       <div className="mb-8">
         <LocationSearch
-          onLocationSelect={handleLocationSelect}
+          onLocationSelect={setSelectedLocation}
           searchType={selectedType}
           className="mb-6"
         />
@@ -302,7 +289,7 @@ const LocationsPage: React.FC = () => {
             center={userLocation || { lat: 12.9716, lng: 77.5946 }}
             zoom={13}
             searchType={selectedType}
-            onLocationSelect={handleLocationSelect}
+            onLocationSelect={setSelectedLocation}
             className="h-96 lg:h-[600px]"
           />
         </div>
